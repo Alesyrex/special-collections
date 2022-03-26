@@ -2,7 +2,11 @@ package com.efimchick.ifmo.collections;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 class PairStringList extends AbstractList<String> {
     private static final int NUMBER_OF_COPIES = 2;
@@ -174,10 +178,10 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return new MyIterator();
+        return new PairStringListIterator();
     }
 
-    private class MyIterator implements Iterator<String> {
+    private class PairStringListIterator implements Iterator<String> {
 
         private int currentIndex;
 

@@ -78,10 +78,10 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Iterator<Integer> iterator() {
-        return new MyIterator();
+        return new MedianQueueIterator();
     }
 
-    private class MyIterator implements Iterator<Integer> {
+    private class MedianQueueIterator implements Iterator<Integer> {
 
         private int currentIndex;
 

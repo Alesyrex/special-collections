@@ -1,11 +1,11 @@
 package com.efimchick.ifmo.collections;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.function.Consumer;
 
 class SortedByAbsoluteValueIntegerSet extends AbstractSet<Integer> {
 
@@ -17,12 +17,7 @@ class SortedByAbsoluteValueIntegerSet extends AbstractSet<Integer> {
     }
 
     public SortedByAbsoluteValueIntegerSet() {
-        this(new TreeMap<>(new Comparator<>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return Math.abs(o1) - Math.abs(o2);
-            }
-        }));
+        this(new TreeMap<>(new SortedByAbsoluteValueIntegerSetComparator()));
     }
 
     @Override
@@ -41,11 +36,6 @@ class SortedByAbsoluteValueIntegerSet extends AbstractSet<Integer> {
     }
 
     @Override
-    public void forEach(Consumer<? super Integer> action) {
-        super.forEach(action);
-    }
-
-    @Override
     public Iterator<Integer> iterator() {
         return map.navigableKeySet().iterator();
     }
@@ -53,5 +43,14 @@ class SortedByAbsoluteValueIntegerSet extends AbstractSet<Integer> {
     @Override
     public int size() {
         return map.size();
+    }
+
+    private static class SortedByAbsoluteValueIntegerSetComparator implements Comparator<Integer>, Serializable {
+        private static final long serialVersionUID = 1;
+
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return Math.abs(o1) - Math.abs(o2);
+        }
     }
 }
