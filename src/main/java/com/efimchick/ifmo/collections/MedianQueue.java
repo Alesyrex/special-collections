@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-class MedianQueue extends AbstractQueue<Integer> {
+public class MedianQueue extends AbstractQueue<Integer> {
 
     public static final int DENOMINATOR = 2;
     private Integer[] queue = new Integer[]{};

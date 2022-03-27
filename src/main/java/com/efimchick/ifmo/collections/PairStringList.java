@@ -1,17 +1,15 @@
 package com.efimchick.ifmo.collections;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class PairStringList extends AbstractList<String> {
+public class PairStringList extends AbstractList<String> {
     private static final int NUMBER_OF_COPIES = 2;
     private static final int INIT_CAPACITY = 10;
-    private static final int LOAD_FACTOR = 2;
+    private static final int ARRAY_EXPANSION_FACTOR = 2;
     private static final String OUT_OF_BOUND_FORMAT = "Index: %d, Size: %d";
     private String[] stringElements = new String[INIT_CAPACITY];
     private int size;
@@ -40,7 +38,7 @@ class PairStringList extends AbstractList<String> {
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends String> strings) {
+    public boolean addAll(Collection<? extends String> strings) {
         String[] tempStringElements = getStringArray(strings);
         int numNew = tempStringElements.length;
         ensureCapacity(size + numNew);
@@ -80,15 +78,15 @@ class PairStringList extends AbstractList<String> {
         return tempStringElements;
     }
 
-    public void resize(int length) {
+    private void resize(int length) {
         String[] newStringElements = new String[length];
         System.arraycopy(stringElements, 0, newStringElements, 0, size);
         stringElements = newStringElements;
     }
 
-    public void ensureCapacity(int minCapacity) {
+    private void ensureCapacity(int minCapacity) {
         if (size >= stringElements.length - minCapacity) {
-            resize((stringElements.length + minCapacity) * LOAD_FACTOR);
+            resize((stringElements.length + minCapacity) * ARRAY_EXPANSION_FACTOR);
         }
     }
 
@@ -149,9 +147,7 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            stringElements[i] = null;
-        }
+        stringElements = new String[]{};
         size = 0;
     }
 
