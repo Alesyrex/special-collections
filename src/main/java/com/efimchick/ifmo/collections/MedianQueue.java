@@ -2,7 +2,6 @@ package com.efimchick.ifmo.collections;
 
 import java.util.AbstractQueue;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,12 +9,11 @@ import java.util.NoSuchElementException;
 public class MedianQueue extends AbstractQueue<Integer> {
 
     public static final int DENOMINATOR = 2;
-    private Integer[] queue = new Integer[]{};
-    private int size;
+    private final List<Integer> queueList = new ArrayList<>();
 
     @Override
     public int size() {
-        return size;
+        return queueList.size();
     }
 
     @Override
@@ -23,57 +21,29 @@ public class MedianQueue extends AbstractQueue<Integer> {
         if (added == null) {
             throw new IllegalArgumentException();
         }
-        Integer[] newQueue = new Integer[queue.length + 1];
-        System.arraycopy(queue, 0, newQueue, 0, queue.length);
-        newQueue[size] = added;
-        queue = newQueue;
-        size++;
-        setMedian();
+        queueList.add(added);
+        queueList.sort(Integer::compareTo);
         return true;
     }
 
-    private void setMedian() {
-        List<Integer> medians = new ArrayList<>();
-
-        Arrays.sort(queue);
-        int amountElements = size;
-
-        int leftOfMedian = (amountElements - 1) / DENOMINATOR;
-        int rightOfMedian = amountElements - amountElements / DENOMINATOR;
-
-        while (0 <= leftOfMedian || rightOfMedian <= amountElements - 1) {
-            if (leftOfMedian + 1 > amountElements - rightOfMedian) {
-                medians.add(queue[leftOfMedian]);
-                --leftOfMedian;
-            } else if (leftOfMedian + 1 < amountElements - rightOfMedian) {
-                medians.add(queue[rightOfMedian]);
-                ++rightOfMedian;
-            } else {
-                if (queue[leftOfMedian] <= queue[rightOfMedian]) {
-                    medians.add(queue[leftOfMedian]);
-                    --leftOfMedian;
-                } else {
-                    medians.add(queue[rightOfMedian]);
-                    ++rightOfMedian;
-                }
-            }
+    private int getMedian() {
+        int median;
+        if (queueList.size() % DENOMINATOR == 0) {
+            median = queueList.size() / DENOMINATOR - 1;
+        } else {
+            median = queueList.size() / DENOMINATOR;
         }
-        queue = medians.toArray(new Integer[queue.length]);
+        return median;
     }
 
     @Override
     public Integer poll() {
-        Integer[] newQueue = new Integer[queue.length - 1];
-        size--;
-        Integer oldFirst = queue[0];
-        System.arraycopy(queue, 1, newQueue, 0, size);
-        queue = newQueue;
-        return oldFirst;
+        return queueList.remove(getMedian());
     }
 
     @Override
     public Integer peek() {
-        return queue[0];
+        return queueList.get(getMedian());
     }
 
     @Override
@@ -83,11 +53,12 @@ public class MedianQueue extends AbstractQueue<Integer> {
 
     private class MedianQueueIterator implements Iterator<Integer> {
 
-        private int currentIndex;
+        private int currentIndex = getMedian();
+        private int index;
 
         @Override
         public boolean hasNext() {
-            return currentIndex < size;
+            return index < size();
         }
 
         @Override
@@ -95,9 +66,13 @@ public class MedianQueue extends AbstractQueue<Integer> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            int nextIndex = currentIndex;
-            currentIndex++;
-            return queue[nextIndex];
+            if ((size() - index) % DENOMINATOR == 0 && index > 0) {
+                currentIndex -= index;
+            } else {
+                currentIndex += index;
+            }
+            index++;
+            return queueList.get(currentIndex);
         }
     }
 }
